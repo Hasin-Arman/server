@@ -30,7 +30,7 @@ client.connect(err => {
   app.delete('/delete/:id',(req,res)=>{
     eventCollection.deleteOne({_id:ObjectId(req.params.id)})
     .then(result=>{
-      res.redirect('/');
+      res.send(result.deletedCount>0);
     })
   })
 

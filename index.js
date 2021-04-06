@@ -3,6 +3,7 @@ const app = express()
 const cors=require('cors');
 const port = process.env.PORT || 5000;
 require('dotenv').config();
+const ObjectId=require('mongodb').ObjectId;
 
 app.use(cors());
 app.use(express.json());
@@ -24,6 +25,13 @@ client.connect(err => {
           console.log(result.insertedCount);
           res.send(result.insertedCount>0)
       })
+  })
+
+  app.delete('/delete/:id',(req,res)=>{
+    eventCollection.deleteOne({_id:ObjectId(req.params.id)})
+    .then(result=>{
+      console.log(result);
+    })
   })
 
   app.get('/events',(req,res)=>{

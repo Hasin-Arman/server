@@ -16,6 +16,7 @@ console.log(process.env.DB_USER)
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 client.connect(err => {
   const eventCollection = client.db("volunteer").collection("events");
+  const registrationCollection = client.db("volunteer").collection("registers");
 
 
   app.post('/addEvent',(req,res)=>{
@@ -27,6 +28,13 @@ client.connect(err => {
       })
   })
 
+app.post('/registration',(req,res)=>{
+  registrationCollection.insertOne(req.body)
+  .then(result=>{
+    res.send(result.insertedCount>0)
+  })
+})
+
   app.delete('/delete/:id',(req,res)=>{
     eventCollection.deleteOne({_id:ObjectId(req.params.id)})
     .then(result=>{
@@ -36,6 +44,13 @@ client.connect(err => {
 
   app.get('/events',(req,res)=>{
       eventCollection.find({})
+      .toArray((err,documents)=>{
+          res.send(documents); 
+      })
+
+  })
+  app.get('/registrationInfo',(req,res)=>{
+      registrationCollection.find({})
       .toArray((err,documents)=>{
           res.send(documents); 
       })
